@@ -1,3 +1,12 @@
+// global vars
+let playerScore = 0;
+let computerScore = 0;
+let pChoice;
+let cChoice
+
+// get result
+const results = document.querySelector("#resultBox");
+
 // function to get action of computer
 function getComputerChoice(){
     let choice = Math.floor(Math.random()*3);
@@ -16,22 +25,7 @@ function getComputerChoice(){
     return option;
 }
 
-// function to get action of player
-function getHumanChoice(){
-    let choice = (prompt("Please pick your action (rock, paper, scissors).","")).toLowerCase();
-    while((choice!="rock")&&(choice!="paper")&&(choice!="scissors")){
-        choice = (prompt("Please pick your action, use an exact option (rock, paper, scissors).","")).toLowerCase();
-    }
-    return choice;
-}
-
 function playGame(){
-    // game variables
-    let playerScore = 0;
-    let computerScore = 0;
-    let pChoice;
-    let cChoice;
-
     // play one round
     function playRound(playerChoice, computerChoice){
         let result;
@@ -75,17 +69,54 @@ function playGame(){
         // print result
         playerChoice = playerChoice.charAt(0).toUpperCase() + playerChoice.slice(1);
         computerChoice = computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
-        return `You ${result}! ${playerChoice} ${verb} ${computerChoice}.`;
+        return `You ${result} this round. ${playerChoice} ${verb} ${computerChoice}.`;
     }
-
-    // play round 5 times
-    for(let i = 0; i <5; i++){
-        console.log(`The score is currently: PLAYER-${playerScore} COMPUTER-${computerScore}`);
-        pChoice = getHumanChoice();
-        cChoice = getComputerChoice();
-        console.log(playRound(pChoice,cChoice));
+    let roundResult = playRound(pChoice,cChoice);
+    let score = getScore();
+    let printStatement = "";
+    let winnerStatement = "";
+    // choose winner statement and reset score
+    if ((playerScore === 5)||(computerScore === 5)){
+        if(playerScore === 5){
+            winnerStatement = "You win!";
+        }
+        else{
+            winnerStatement = "The computer wins!";
+        }
+        printStatement = roundResult + '\n' + winnerStatement;
+        playerScore = 0;
+        computerScore = 0;
     }
-    console.log(`FINALSCORE: PLAYER-${playerScore} COMPUTER-${computerScore}`);
+    else{
+        printStatement = roundResult + '\n' + score;
+    }
+    results.textContent = printStatement;
 }
 
-playGame();
+function getScore(){
+    return`PLAYER: ${playerScore}, COMPUTER: ${computerScore}`;
+}
+
+const choices = document.querySelector("#choices");
+
+choices.addEventListener('click', (event)=>{
+    let target = event.target;
+    //console.log('click');
+    // select pChoice
+    switch(target.id){
+        case 'rock':
+            pChoice = "rock";
+            break;
+        case 'paper':
+            pChoice = "paper";
+            break;
+        case 'scissors':
+            pChoice = "scissors";
+            break;
+    }
+    // select cChoice
+    cChoice = getComputerChoice();
+
+    //play game
+    playGame();
+});
